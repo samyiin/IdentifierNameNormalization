@@ -4,7 +4,7 @@ Normalize identifier names (split, expand, and standardize). I need this too for
 
 # Explanation
 ## Naming conventions
-There are several naming conventions, I will take the one from python style guild (https://peps.python.org/pep-0008/#descriptive-naming-styles). Regarding the regex of naming conventions, there are reddit posts that discuss about it, but whether or not to include numbers in the name is still debatable. So I wrote my own version of regex based on their discussion, that allows numbers in the names. (Although names cannot start with number.)
+There are several naming conventions, I will take the one from python style guild (https://peps.python.org/pep-0008/#descriptive-naming-styles). I used a different system of naming though... Regarding the regex of naming conventions, there are reddit posts that discuss about it, but whether or not to include numbers in the name is still debatable. So I wrote my own version of regex based on their discussion, that allows numbers in the names. (Although names cannot start with number.)
 
     lowercase & lowercase single letter: ^[a-z][a-z0-9]*$ -> because we can't be sure if it's snake case or camel case
     snake_case:                          ^[a-z][a-z0-9]*(_[a-z0-9]+)+$  -> strating from the second word, allows words starting with numbers such as "my_8na9me10"
