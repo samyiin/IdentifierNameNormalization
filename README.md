@@ -22,6 +22,8 @@ Names that are unpleasant but still considered as valid:
 
     "todaYisawOndErFuLday" -> this is a camelCase
     "m2n3m423_888" -> this is snake case...
+
+I have compared the definition of the 5 classes I defined, they are mutually exclusive (there cannot be a name that is in both class), and they are complementary (all the names must belong to one of the classes (of course, because I have the "other" class that takes every unidentifiable names....). There can be a totally different definition on internet if you don't think number should exist in identifier names, but I guess just take the "0-9" our of the regex and it would work...
     
 ## Hardword to Softword
 This notion is introduced by Lawrie in his paper *Quantifying identifier quality: An analysis of trends* (2007). "Hard words" are visible parts like "priorityQueue" and "soft words" are smaller semantic units like priority and queue. Regarding the logic to split words, the goal is to separate all the visible separable parts:
