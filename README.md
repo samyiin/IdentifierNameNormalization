@@ -28,11 +28,11 @@ This notion is introduced by Lawrie in his paper *Quantifying identifier quality
 
 First of all, no standard English word contains number or underscore in them, so if we see number or underscore, it is an indicator for split.
 
-        [A-Za-z]+|\d+
+    [A-Za-z]+|\d+
 
 After we split the name by underscores and numbers, each part will be a combination of upper and lower letters, here our rule is **"Split before each capital letter that is followed by a lowercase letter or capital letter that is preceded by a lowercase letter"**. 
 
-        (?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])
+    (?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])
 
 For example: 
 1. "helloWorld" will be "hello" and "World"
