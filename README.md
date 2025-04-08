@@ -32,4 +32,4 @@ First of all, no standard English word contains number or underscore in them, so
 3. "VCDimension" should be "VC" and "Dimension".
 4. “helloWORLD" should be "hello" and "WORLD"
 
-Python library *inflection* uses the logic regarding underscore and combination of upper and lower letters, so we build a name parser based on that. 
+Python library *inflection* uses the logic regarding underscore and combination of upper and lower letters, but it doesn't keep the original capitalization, neither does it split numbers. We need the original caitalization for the masters thesis. So I guess I will just write one parser myself.  
