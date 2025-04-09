@@ -54,7 +54,8 @@ By our definition above, soft words will only contain English Letters. (Because 
     typo of dictionary word (typo of abbreviation would be unidentifiable term...)
     unidentifiable terms
     
-To make sure this division is mutually exclusive, we define  
+To make sure this division is mutually exclusive, we define 
+
     Single letter is not dictionary word. 
     abbreviation is non-dictionary word, non single letter.
     typo of dictionary word is non-dictionary word, non single letter, non abbreviation
@@ -69,14 +70,24 @@ For example:
     
 The difficulty of splitting soft words:
     
-    agrs: can be an abbreviation of "arguments", but can also be interprete as "arg" + "s"
-Previous attempts:
+    agrs: can be an abbreviation of "arguments", but can also be interprete as "arg" + "s" 
+    regex: can be combination of abbreviations for "regular" and "expression", also can just be abbreviation of "regular expression"
+    
+**Previous attempts**:
 1. In "A large-scale investigation of local variable names in java programs: Is longer name better for broader scope variable?" 2021, Aman use the method: given a soft word, generate all possible two-term-concatenation, see if we can find concatenation of two dictionary words (their dictionary also includes 200 common abbreviations). (Limitation: what if the soft word is concatenation of more than two words? They claimed that such case doesn't exist in their data).
 2. In "Quantifying identifier quality: An analysis of trends" 2007, Lawrie used A greedy algorithm to identify soft words. It looks for the longest prefix and the longest suffix that are ’on a list’. The list of abbreviations includes domain abbreviations (e.g., alt for altitude) and programming abbreviations (e.g., txt for text and msg for message). (Limitation: This list of only about 200 common abbreviations, clearly does not contain all abbreviation used in the analyzed code. )
 3. In "Learning natural coding conventions" 2014, Allamanis used The aggressive splitting algorithm GenTest, which systematically generates all possible splits of an identifier and then scores them based on a set of features. The features and exact weightings can be found in the work of Lawrie et al. (Limitation: This is a more general approach than Aman, but it still limits to concatenation of two components.)
-4. In "nvestigating naming convention adherence in java references" 2015, Butler tokenised the names with INTT. (Limitation: tokenization is certainly a better approach, not so much critisism here...)
+4. In "nvestigating naming convention adherence in java references" 2015, Butler tokenised the names with INTT. (Limitation: tokenization is certainly a better approach, not so much critisism here... The only thing we want to improve is adding common sense: for example, "throwable" should not be splitted to "throw" and "able")
+
+**Our approach**:
+Usually identifying abbreviations goes hand in hand with splitting concatenations. For example, why do we decide to split "altname" into alt + name? Because we see alt is abbreviation for "alternative". So we cannot disect the process into two setps: "first split the names and then for each name map the phrase back to dictionary words". Basically splitting concatenations requires certain level of "look ahead". 
 
 ## Identify abbreviations
+Difficulty: the relationship of words to abbreviations is many-to-many. There are cases where the same word has multiple abbreviations, such as “configuration”which is abbreviated as “config”, “conf”, or even “cfg”. At the same time the abbreviation “pos”can signify “position”or “positive”. Although we can never be certain, a common approach is to take context into consideration. For example, "pos" in "bomb_pos" is more likely to mean "position" than "positive". 
+
+**Previous attempts**:
+1. 
+
 ## Identify typos
 By our definition, typos are not some abbreviation, it is really just typos of a dictionary word. We will use the same approach by Feitelson in "How developers choose names" 2022: We will identify names with a Levenshtein distance less than equals 2. This means that if one name can be transformed into the other by up to 2 single-letter edits (insertion, deletion, or substitution), then it's the typo of the other. 
 
