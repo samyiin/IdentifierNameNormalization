@@ -24,7 +24,7 @@ Names that are unpleasant but still considered as valid:
     "m2n3m423_888" -> this is snake case...
     "To4267day" -> this is a PascalCase, if you agree that na32me_bad is a snake case, then you would agree to this....
 
-I have compared the definition of the 5 classes I defined, they are mutually exclusive (there cannot be a name that is in both class), and they are complementary (all the names must belong to one of the classes (of course, because I have the "other" class that takes every unidentifiable names....). There can be a totally different definition on internet if you don't think number should exist in identifier names, but I guess just take the "0-9" our of the regex and it would work...
+I have compared the definition of the 5 classes I defined, they are mutually exclusive (there cannot be a name that is in both class), and they are complementary (all the names must belong to one of the classes (of course, because I have the "other" class that takes every unidentifiable names....). There can be a totally different definition on internet if you don't think number should exist in identifier names, but I guess just take the "0-9" out of the regex and it would work...
     
 ## Hardword to Softword
 This notion is introduced by Lawrie in his paper *Quantifying identifier quality: An analysis of trends* (2007). "Hard words" are visible parts like "priorityQueue" and "soft words" are smaller semantic units like priority and queue. Regarding the logic to split words, the goal is to separate all the visible separable parts, here I fist split by naming convention:
@@ -77,19 +77,49 @@ The difficulty of splitting soft words:
 1. In "A large-scale investigation of local variable names in java programs: Is longer name better for broader scope variable?" 2021, Aman use the method: given a soft word, generate all possible two-term-concatenation, see if we can find concatenation of two dictionary words (their dictionary also includes 200 common abbreviations). (Limitation: what if the soft word is concatenation of more than two words? They claimed that such case doesn't exist in their data).
 2. In "Quantifying identifier quality: An analysis of trends" 2007, Lawrie used A greedy algorithm to identify soft words. It looks for the longest prefix and the longest suffix that are ’on a list’. The list of abbreviations includes domain abbreviations (e.g., alt for altitude) and programming abbreviations (e.g., txt for text and msg for message). (Limitation: This list of only about 200 common abbreviations, clearly does not contain all abbreviation used in the analyzed code. )
 3. In "Learning natural coding conventions" 2014, Allamanis used The aggressive splitting algorithm GenTest, which systematically generates all possible splits of an identifier and then scores them based on a set of features. The features and exact weightings can be found in the work of Lawrie et al. (Limitation: This is a more general approach than Aman, but it still limits to concatenation of two components.)
-4. In "nvestigating naming convention adherence in java references" 2015, Butler tokenised the names with INTT. (Limitation: tokenization is certainly a better approach, not so much critisism here... The only thing we want to improve is adding common sense: for example, "throwable" should not be splitted to "throw" and "able")
+4. In "Investigating naming convention adherence in java references" 2015, Butler tokenised the names with INTT. (Limitation: tokenization is certainly a better approach, not so much critisism here... The only thing we want to improve is adding common sense: for example, "throwable" should not be splitted to "throw" and "able")
 
-**Our approach**:
-Usually identifying abbreviations goes hand in hand with splitting concatenations. For example, why do we decide to split "altname" into alt + name? Because we see alt is abbreviation for "alternative". So we cannot disect the process into two setps: "first split the names and then for each name map the phrase back to dictionary words". Basically splitting concatenations requires certain level of "look ahead". 
+## Identify Dictionary words
+Identifying dictionary words might seem trivial at frist, but there are many versions of dictionary, some includes "too many" words and some includes "too few" words. For example, the word "gen" is technically a word that means "information" in British English, but "normally" people wouldn't treat it as a dictioanry word, but rather abbreviation for "generation". 
+
+So far I found a few dictionary of choice, I will list their link here:
+NLTK
+
+    https://www.nltk.org/
+ENABLE (Enhanced North American Benchmark Lexicon)
+
+    https://github.com/dolph/dictionary.git
+SCOWL (Spell Checker Oriented Word Lists)
+
+    https://github.com/en-wl/wordlist.git
+Some random dictionary on internet?
+
+    https://github.com/dwyl/english-words.git
+
+ COCA (Corpus of Contemporary American English )
+
+     https://www.english-corpora.org/coca/
+
+After usage, I feel like NLTK contains too little words, COCA contains way too much, also of course if I combine everything, it contains too much words (like "gen"), so I will stick to ENABLE. 
+
 
 ## Identify abbreviations
 Difficulty: the relationship of words to abbreviations is many-to-many. There are cases where the same word has multiple abbreviations, such as “configuration”which is abbreviated as “config”, “conf”, or even “cfg”. At the same time the abbreviation “pos”can signify “position”or “positive”. Although we can never be certain, a common approach is to take context into consideration. For example, "pos" in "bomb_pos" is more likely to mean "position" than "positive". 
 
 **Previous attempts**:
-1. 
+1. In "Statistical unigram analysis for source code repository” 2017, Xu built a Naive Bayes model to predict the original word behind an abbreviation.they search for potential candidate within a certain **radius** of the abbreviation, e.g., the method or class in which the abbreviation is used or data flow or control flow neighborhood of the abbreviation. And then compare if the abbreviation is a sub string of the found word (variables it interacts with).
+2. In " large-scale investigation of local variable names in java programs: Is longer name better for broader scope variable?" 2021, Aman built a dictionary of 201 common abbreviations by referencing https://www.abbreviations.com/.
+3. In "When are names similar or the same? introducing the code names matcher library" 2022, Munk consider one word being abbreviation of the other if the first word is a prefix of the other, coupled with the requirement that the shorter one be at least 3 letters long.
+4. In "Reanalysis of empirical data on java local variables with narrow and broad scope" 2023, Feitelson scanned 10,000 names, ended up with 199 word-abbreviation pairs. (for example,“regexp”which is an abbreviation of“regular expression”)
+5. In "The impact of vocabulary normalization" 2015, Binkley mirror the process of statistical machine translation, exploits co-occurrence data to select the best of several possible expansions
+6. In "Investigating naming convention adherence in java references" 2015, Butler used the library MDSC, a freely available multi-dictionary spell checking library for identifier names, contains lists of abbreviations, acronyms and words from the SCOWL word lists with additional lists of technical terms, abbreviations and acronyms taken from their own work and the AMAP project.
 
 ## Identify typos
 By our definition, typos are not some abbreviation, it is really just typos of a dictionary word. We will use the same approach by Feitelson in "How developers choose names" 2022: We will identify names with a Levenshtein distance less than equals 2. This means that if one name can be transformed into the other by up to 2 single-letter edits (insertion, deletion, or substitution), then it's the typo of the other. 
 
-
+## hummm
+**Our approach**:
+Usually identifying abbreviations goes hand in hand with splitting concatenations. For example, why do we decide to split "altname" into alt + name? Because we see alt is abbreviation for "alternative". So we cannot disect the process into two setps: "first split the names and then for each name map the phrase back to dictionary words". Basically splitting concatenations requires certain level of "look ahead". 
     
+
+
