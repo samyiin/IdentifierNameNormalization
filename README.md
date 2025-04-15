@@ -46,56 +46,49 @@ For example:
 Python library *inflection* uses the logic regarding underscore and combination of upper and lower letters, but it doesn't keep the original capitalization, neither does it split numbers. We need the original caitalization for the masters thesis. So I guess I will just write one parser myself.  
 
 ## Interprete softwords
-By our definition above, soft words will only contain English Letters. (Because we splitted it by numbers and underscores). Now a softword can be a concatenation of one or more of the following components:
+By our definition above, soft words will only contain English Letters. (Because we splitted it by numbers and underscores). Now a softword can be a concatenation of one or more of the following semantic components:
 
     single letters
     dictionary words
     common abbreviation (including acronyms, technical terms, domain specific terms)
     typo of dictionary word (typo of abbreviation would be unidentifiable term...)
     unidentifiable terms
-    
-To make sure this division is mutually exclusive (Mainly we just want to make sure that single letter is not also abbreviation), we define 
-
-    Single letter is not dictionary word. 
-    abbreviation is non-dictionary word, non single letter.
-    typo of dictionary word is non-dictionary word, non single letter, non abbreviation
-    unidentifiable temrs is non of the above
 
 We generalize the process of softword interpretation into two steps: **split** and **expansion**. 
-1. Split the softword into semantical components.
-2. Expand each semantical components if necessary: single letter and dictionary word stays as is, expand abbreviations and fix typos.
+1. Split the softword into semantic components.
+2. Based on the split in step 1, expand each semantical components if necessary: single letter and dictionary word stays as is, expand abbreviations and fix typos.
 
 Eventually the most probable **interpretation** of a softword becomes the most likely "combination" of **split and expansion**. (Technically we can have a math definition here with probability and Cartesian product and stuff...)
 
-I will give four sets of examples, the first set of examples is when the split and expansion are very clear (to our "commob sense"):
+I will give four sets of examples, the first set of examples is when the split and expansion are very clear (to our "common sense"):
 
-    filename = split: "file" + "name". | expansion: they are both dictionary words. | interpretation: "file name"
-    stepx = split: "step" + "x"(single letter). | expansion: combination of a dictionary word and a single letter. | interpretation: "step x"
+    filename = split: "file" (dictionary) + "name" (dictionary). | expansion: they are both dictionary words. | result: "file name"
+    stepx = split: "step" (dictionary) + "x"(single letter). | expansion: combination of a dictionary word and a single letter. | result: "step x"
     
-The second set of examples is when the split is not clear (thus the interpretation is not clear):
+The second set of examples is when the split is not clear (thus the result is not clear):
 
-    e = split: "e" (single letter). | expansion: it's a single letter. | interpretation: "e"
-    e = split: "e" (abbreviation). | expansion: abbreviation of "exception". | interpretation: "exception"
+    e = split: "e" (single letter). | expansion: it's a single letter. | result: "e"
+    e = split: "e" (abbreviation). | expansion: abbreviation of "exception". | result: "exception"
 
-    nowhere = split: "now here". | expansion: two dictionary words. | interpretation: "now here"
-    nowhere = split: "no where". | expansion: two dictionary words. | interpretation: "no where"
+    nowhere = split: "now" (dictionary) + "here" (dictionary). | expansion: two dictionary words. | result: "now here"
+    nowhere = split: "no" (dictionary) +  where" (dictionary). | expansion: two dictionary words. | result: "no where"
 
-    args = split: "args" (abbreviation). | expansion: abbreviation of "arguments". | interpretation: "arguments"
-    args = split: "arg"(abbreviation) + "s" (single letter). | expansion: "arg" is abbreviation of "argument". | interpretation: "argument s"
+    args = split: "args" (abbreviation). | expansion: abbreviation of "arguments". | result: "arguments"
+    args = split: "arg"(abbreviation) + "s" (single letter). | expansion: "arg" is abbreviation of "argument". | result: "argument s"
 
-The third set of examples is when the split is clear, but the expansion is not clear (thus the interpretation is not clear):
+The third set of examples is when the split is clear, but the expansion is not clear (thus the result is not clear):
 
-    alt = split: "alt" (abbreviation). | expansion: abbreviation of "alternative". | interpretation: "alternative"
-    alt = split: "alt" (abbreviation). | expansion: abbreviation of "alternate". | interpretation: "alternate"
+    alt = split: "alt" (abbreviation). | expansion: abbreviation of "alternative". | result: "alternative"
+    alt = split: "alt" (abbreviation). | expansion: abbreviation of "alternate". | result: "alternate"
 
-The fourth set of examples is more tricky: the interpretation is the same, but there might be different splits and expansions: 
+The fourth set of examples is more tricky: the result is the same, but there might be different splits and expansions: 
 
-    regex = split: "reg"(abbreviation) + "ex" (abbreviation). | expansion: abbreviation of "regular" and "expression". | interpretation: "regular expression"
-    regex = split: "regex"(abbreviation). | expansion: abbreviation of "regular expression". | interpretation: "regular expression"
+    regex = split: "reg"(abbreviation) + "ex" (abbreviation). | expansion: abbreviation of "regular" and "expression". | result: "regular expression"
+    regex = split: "regex"(abbreviation). | expansion: abbreviation of "regular expression". | result: "regular expression"
 
-    kwargs = split: "kw" (abbreviation) + "args" (abbreviation) | expansion: abbreviation of "keyword" and "arguments". | interpretation: "keyword arguments"
-    kwargs = split: "kwargs"(abbreviation). | expansion: abbreviation of "keyword arguments". | interpretation: "keyword arguments"
-It can also be that neither the split and expansion are clear, and thus the interpretation is not clear. 
+    kwargs = split: "kw" (abbreviation) + "args" (abbreviation) | expansion: abbreviation of "keyword" and "arguments". | result: "keyword arguments"
+    kwargs = split: "kwargs"(abbreviation). | expansion: abbreviation of "keyword arguments". | result: "keyword arguments"
+Obviously, it can also be that neither the split and the expansion are clear, and thus in most cases the result are not clear. 
     
 **Previous attempts**:
 1. In "A large-scale investigation of local variable names in java programs: Is longer name better for broader scope variable?" 2021, Aman use the method: given a soft word, generate all possible two-term-concatenation, see if we can find concatenation of two dictionary words (their dictionary also includes 200 common abbreviations). (Limitation: what if the soft word is concatenation of more than two words? They claimed that such case doesn't exist in their data).
@@ -103,7 +96,18 @@ It can also be that neither the split and expansion are clear, and thus the inte
 3. In "Learning natural coding conventions" 2014, Allamanis used The aggressive splitting algorithm GenTest, which systematically generates all possible splits of an identifier and then scores them based on a set of features. The features and exact weightings can be found in the work of Lawrie et al. (Limitation: This is a more general approach than Aman, but it still limits to concatenation of two components.)
 4. In "Investigating naming convention adherence in java references" 2015, Butler tokenised the names with INTT. (Limitation: tokenization is certainly a better approach, not so much critisism here... The only thing we want to improve is adding common sense: for example, "throwable" should not be splitted to "throw" and "able")
 
-### Identify Dictionary words
+**Our Approach**:
+
+I argue that chosing the most probably **interpretation** (aka **split and expansion**) is a semantic task. It based on "common sense", which is a complex judgement based on the given context -- the project, the file name, the function of the identifier in the code, the convention of community, etc.... Simple algorithm can not capture the omplexity. So I decided that I will let LLM decide the most probable interpretation. 
+
+But in reality, I did some heuristics preprocessing in my own masters thesis to save money... (you don't have to, you can just pass everything to LLM). 
+1. We first use a local dictionary to identify all the dictionary words.
+2. We then filter out all the single letters and lable them as single letter (they might be abbreviation but I argue that most of the time they are too ambiguous to expand)
+3. Only for the rest of the unidentifiable softwords, we pass them to LLM. In our case, we only pass the hardword as the context for the unidentifiable softword, technically you can also pass in other context like the entire project, which should largely increase the accuracy. But money money....
+
+This approach reduced the amount of request from 500k down to 100k... So worth a try. 
+
+## Identify Dictionary words
 Identifying dictionary words might seem trivial at frist, but there are many versions of dictionary, some includes "too many" words and some includes "too few" words. For example, the word "gen" is technically a word that means "information" in British English, but "normally" people wouldn't treat it as a dictioanry word, but rather abbreviation for "generation". 
 
 So far I found a few dictionary of choice, I will list their link here:
@@ -127,7 +131,7 @@ Some random dictionary on internet?
 After usage, I feel like NLTK contains too little words, COCA contains way too much, also of course if I combine everything, it contains too much words (like "gen"), so I will stick to ENABLE. 
 
 
-### Identify abbreviations
+## Identify abbreviations
 Difficulty: the relationship of words to abbreviations is many-to-many. There are cases where the same word has multiple abbreviations, such as “configuration”which is abbreviated as “config”, “conf”, or even “cfg”. At the same time the abbreviation “pos”can signify “position”or “positive”. Although we can never be certain, a common approach is to take context into consideration. For example, "pos" in "bomb_pos" is more likely to mean "position" than "positive". 
 
 **Previous attempts**:
@@ -138,8 +142,9 @@ Difficulty: the relationship of words to abbreviations is many-to-many. There ar
 5. In "The impact of vocabulary normalization" 2015, Binkley mirror the process of statistical machine translation, exploits co-occurrence data to select the best of several possible expansions
 6. In "Investigating naming convention adherence in java references" 2015, Butler used the library MDSC, a freely available multi-dictionary spell checking library for identifier names, contains lists of abbreviations, acronyms and words from the SCOWL word lists with additional lists of technical terms, abbreviations and acronyms taken from their own work and the AMAP project.
 
-### Identify typos
-By our definition, typos are not some abbreviation, it is really just typos of a dictionary word. We will use the same approach by Feitelson in "How developers choose names" 2022: We will identify names with a Levenshtein distance less than equals 2. This means that if one name can be transformed into the other by up to 2 single-letter edits (insertion, deletion, or substitution), then it's the typo of the other. 
+## Identify typos
+**Previous attempts**:
+1. In "How developers choose names" 2022: Feitelson identify typos by names with a Levenshtein distance less than equals 2. This means that if one name can be transformed into an dictionary word by up to 2 single-letter edits (insertion, deletion, or substitution), then it's the typo of the dictionary word (Given that we already ruled out the possibility of single letter, dictionary word, abbreviation.) (This approach is pretty good, but since we are passing things to LLM already, we will not use this approach, LLM can identify typos using common sense, which should be more effective than this algorithm.)
 
     
 
