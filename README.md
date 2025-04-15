@@ -64,6 +64,7 @@ To make sure this division is mutually exclusive (Mainly we just want to make su
 We generalize the process of softword interpretation into two steps: **split** and **expansion**. 
 1. Split the softword into semantical components.
 2. Expand each semantical components if necessary: single letter and dictionary word stays as is, expand abbreviations and fix typos.
+
 Eventually the most probable **interpretation** of a softword becomes the most likely "combination" of **split and expansion**. (Technically we can have a math definition here with probability and Cartesian product and stuff...)
 
 I will give four sets of examples, the first set of examples is when the split and expansion are very clear (to our "commob sense"):
