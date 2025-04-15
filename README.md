@@ -105,7 +105,7 @@ But in reality, I did some heuristics preprocessing in my own masters thesis to 
 2. We then filter out all the single letters and lable them as single letter (they might be abbreviation but I argue that most of the time they are too ambiguous to expand)
 3. Only for the rest of the unidentifiable softwords, we pass them to LLM. In our case, we only pass the hardword as the context for the unidentifiable softword, technically you can also pass in other context like the entire project, which should largely increase the accuracy. But money money....
 
-This approach reduced the amount of request from 500k down to 100k... So worth a try. 
+This approach reduced the amount of request from 160k down to 35k... So worth a try. 
 
 ## Identify Dictionary words
 Identifying dictionary words might seem trivial at frist, but there are many versions of dictionary, some includes "too many" words and some includes "too few" words. For example, the word "gen" is technically a word that means "information" in British English, but "normally" people wouldn't treat it as a dictioanry word, but rather abbreviation for "generation". 
