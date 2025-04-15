@@ -56,7 +56,7 @@ By our definition above, soft words will only contain English Letters. (Because 
 
 We generalize the process of softword interpretation into two steps: **split** and **expansion**. 
 1. Split the softword into semantic components. In this step we decide the type and number of components inside a softword.  
-2. Based on the split in step 1, expand each semantical components if necessary: single letter and dictionary word stays as is, expand abbreviations and fix typos.
+2. Based on the split in step 1, expand each semantic components if necessary: single letter and dictionary word stays as is, expand abbreviations and fix typos.
 
 Eventually the most probable **interpretation** of a softword becomes the most likely "combination" of **split and expansion**. (Technically we can have a math definition here with that conditional probability and Cartesian product and stuff...)
 
