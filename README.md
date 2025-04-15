@@ -45,34 +45,56 @@ For example:
 
 Python library *inflection* uses the logic regarding underscore and combination of upper and lower letters, but it doesn't keep the original capitalization, neither does it split numbers. We need the original caitalization for the masters thesis. So I guess I will just write one parser myself.  
 
-## Splitting softwords
+## Interprete softwords
 By our definition above, soft words will only contain English Letters. (Because we splitted it by numbers and underscores). Now a softword can be a concatenation of one or more of the following components:
 
-    dictionary word
-    single letter
+    single letters
+    dictionary words
     common abbreviation (including acronyms, technical terms, domain specific terms)
     typo of dictionary word (typo of abbreviation would be unidentifiable term...)
     unidentifiable terms
     
-To make sure this division is mutually exclusive, we define 
+To make sure this division is mutually exclusive (Mainly we just want to make sure that single letter is not also abbreviation), we define 
 
     Single letter is not dictionary word. 
     abbreviation is non-dictionary word, non single letter.
     typo of dictionary word is non-dictionary word, non single letter, non abbreviation
     unidentifiable temrs is non of the above
 
-For example:
+We generalize the process of softword interpretation into two steps: **split** and **expansion**. 
+1. Split the softword into semantical components.
+2. Expand each semantical components if necessary: single letter and dictionary word stays as is, expand abbreviations and fix typos.
+Eventually the most probable **interpretation** of a softword becomes the most likely "combination" of **split and expansion**. (Technically we can have a math definition here with probability and Cartesian product and stuff...)
 
-    filename = file + name, combination of two dictionary words
-    regex = reg + ex, combination of abbreviations for "regular" and "expression"
-    stepx = step + x, combination of a dictionary word and a single letter
-    e = can be a single letter, can also be abbreviation of "exception", so it falls under "single letter". 
+I will give four sets of examples, the first set of examples is when the split and expansion are very clear (to our "commob sense"):
+
+    filename = split: "file" + "name". | expansion: they are both dictionary words. | interpretation: "file name"
+    stepx = split: "step" + "x"(single letter). | expansion: combination of a dictionary word and a single letter. | interpretation: "step x"
     
-The difficulty of splitting soft words:
-1. Splitting softword is a semantic task: for example, "nowhere" can be "now here" or "no where", in both cases it's concatenation of two dictionary words. "agrs" can be an abbreviation of "arguments", but can also be interprete as arg (argument) + s (single letter), or even a+r+g+s, concatnation of 4 random English letters. But semantically one of them makes the most sense under the context.
-2. The computational complexity is high: we don't know how many components are there. We will need to generate all possible n splits for n = 1, 2, 3, 4... Technically if we can generate all n-split for all n, then we can rate the possibility using some language model. 
-3. There might be more than one correct answers: for example, "regex" can be combination of abbreviations for "regular" and "expression", also can just be abbreviation of "regular expression". "kwargs" can be kw (keyword) args (arguments), it can also be kwargs (keyword arguments). Both options are equally "correct".
-4. There might be no correct answer: sometimes the given context is not enough ot infer the meaning of the softword. 
+The second set of examples is when the split is not clear (thus the interpretation is not clear):
+
+    e = split: "e" (single letter). | expansion: it's a single letter. | interpretation: "e"
+    e = split: "e" (abbreviation). | expansion: abbreviation of "exception". | interpretation: "exception"
+
+    nowhere = split: "now here". | expansion: two dictionary words. | interpretation: "now here"
+    nowhere = split: "no where". | expansion: two dictionary words. | interpretation: "no where"
+
+    args = split: "args" (abbreviation). | expansion: abbreviation of "arguments". | interpretation: "arguments"
+    args = split: "arg"(abbreviation) + "s" (single letter). | expansion: "arg" is abbreviation of "argument". | interpretation: "argument s"
+
+The third set of examples is when the split is clear, but the expansion is not clear (thus the interpretation is not clear):
+
+    alt = split: "alt" (abbreviation). | expansion: abbreviation of "alternative". | interpretation: "alternative"
+    alt = split: "alt" (abbreviation). | expansion: abbreviation of "alternate". | interpretation: "alternate"
+
+The fourth set of examples is more tricky: the interpretation is the same, but there might be different splits and expansions: 
+
+    regex = split: "reg"(abbreviation) + "ex" (abbreviation). | expansion: abbreviation of "regular" and "expression". | interpretation: "regular expression"
+    regex = split: "regex"(abbreviation). | expansion: abbreviation of "regular expression". | interpretation: "regular expression"
+
+    kwargs = split: "kw" (abbreviation) args (abbreviation) | expansion: abbreviation of "keyword" and "arguments". | interpretation: "keyword arguments"
+    kwargs = split: "kwargs"(abbreviation). | expansion: abbreviation of "keyword arguments". | interpretation: "keyword arguments"
+It can also be that neither the split and expansion are clear, and thus the interpretation is not clear. 
     
 **Previous attempts**:
 1. In "A large-scale investigation of local variable names in java programs: Is longer name better for broader scope variable?" 2021, Aman use the method: given a soft word, generate all possible two-term-concatenation, see if we can find concatenation of two dictionary words (their dictionary also includes 200 common abbreviations). (Limitation: what if the soft word is concatenation of more than two words? They claimed that such case doesn't exist in their data).
@@ -80,7 +102,7 @@ The difficulty of splitting soft words:
 3. In "Learning natural coding conventions" 2014, Allamanis used The aggressive splitting algorithm GenTest, which systematically generates all possible splits of an identifier and then scores them based on a set of features. The features and exact weightings can be found in the work of Lawrie et al. (Limitation: This is a more general approach than Aman, but it still limits to concatenation of two components.)
 4. In "Investigating naming convention adherence in java references" 2015, Butler tokenised the names with INTT. (Limitation: tokenization is certainly a better approach, not so much critisism here... The only thing we want to improve is adding common sense: for example, "throwable" should not be splitted to "throw" and "able")
 
-## Identify Dictionary words
+### Identify Dictionary words
 Identifying dictionary words might seem trivial at frist, but there are many versions of dictionary, some includes "too many" words and some includes "too few" words. For example, the word "gen" is technically a word that means "information" in British English, but "normally" people wouldn't treat it as a dictioanry word, but rather abbreviation for "generation". 
 
 So far I found a few dictionary of choice, I will list their link here:
@@ -104,7 +126,7 @@ Some random dictionary on internet?
 After usage, I feel like NLTK contains too little words, COCA contains way too much, also of course if I combine everything, it contains too much words (like "gen"), so I will stick to ENABLE. 
 
 
-## Identify abbreviations
+### Identify abbreviations
 Difficulty: the relationship of words to abbreviations is many-to-many. There are cases where the same word has multiple abbreviations, such as “configuration”which is abbreviated as “config”, “conf”, or even “cfg”. At the same time the abbreviation “pos”can signify “position”or “positive”. Although we can never be certain, a common approach is to take context into consideration. For example, "pos" in "bomb_pos" is more likely to mean "position" than "positive". 
 
 **Previous attempts**:
@@ -115,12 +137,9 @@ Difficulty: the relationship of words to abbreviations is many-to-many. There ar
 5. In "The impact of vocabulary normalization" 2015, Binkley mirror the process of statistical machine translation, exploits co-occurrence data to select the best of several possible expansions
 6. In "Investigating naming convention adherence in java references" 2015, Butler used the library MDSC, a freely available multi-dictionary spell checking library for identifier names, contains lists of abbreviations, acronyms and words from the SCOWL word lists with additional lists of technical terms, abbreviations and acronyms taken from their own work and the AMAP project.
 
-## Identify typos
+### Identify typos
 By our definition, typos are not some abbreviation, it is really just typos of a dictionary word. We will use the same approach by Feitelson in "How developers choose names" 2022: We will identify names with a Levenshtein distance less than equals 2. This means that if one name can be transformed into the other by up to 2 single-letter edits (insertion, deletion, or substitution), then it's the typo of the other. 
 
-## hummm
-**Our approach**:
-Usually identifying abbreviations goes hand in hand with splitting concatenations. For example, why do we decide to split "altname" into alt + name? Because we see alt is abbreviation for "alternative". So we cannot disect the process into two setps: "first split the names and then for each name map the phrase back to dictionary words". Basically splitting concatenations requires certain level of "look ahead". 
     
 
 
