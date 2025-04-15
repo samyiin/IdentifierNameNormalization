@@ -93,7 +93,7 @@ The fourth set of examples is more tricky: the interpretation is the same, but t
     regex = split: "reg"(abbreviation) + "ex" (abbreviation). | expansion: abbreviation of "regular" and "expression". | interpretation: "regular expression"
     regex = split: "regex"(abbreviation). | expansion: abbreviation of "regular expression". | interpretation: "regular expression"
 
-    kwargs = split: "kw" (abbreviation) args (abbreviation) | expansion: abbreviation of "keyword" and "arguments". | interpretation: "keyword arguments"
+    kwargs = split: "kw" (abbreviation) + "args" (abbreviation) | expansion: abbreviation of "keyword" and "arguments". | interpretation: "keyword arguments"
     kwargs = split: "kwargs"(abbreviation). | expansion: abbreviation of "keyword arguments". | interpretation: "keyword arguments"
 It can also be that neither the split and expansion are clear, and thus the interpretation is not clear. 
     
