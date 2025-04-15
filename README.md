@@ -46,7 +46,7 @@ For example:
 Python library *inflection* uses the logic regarding underscore and combination of upper and lower letters, but it doesn't keep the original capitalization, neither does it split numbers. We need the original caitalization for the masters thesis. So I guess I will just write one parser myself.  
 
 ## Splitting softwords
-By our definition above, soft words will only contain English Letters. (Because we splitted it by numbers and underscores). Now a softword can be a concatenation of one or more of the following things:
+By our definition above, soft words will only contain English Letters. (Because we splitted it by numbers and underscores). Now a softword can be a concatenation of one or more of the following components:
 
     dictionary word
     single letter
@@ -69,9 +69,10 @@ For example:
     e = can be a single letter, can also be abbreviation of "exception", so it falls under "single letter". 
     
 The difficulty of splitting soft words:
-    
-    agrs: can be an abbreviation of "arguments", but can also be interprete as "arg" + "s" 
-    regex: can be combination of abbreviations for "regular" and "expression", also can just be abbreviation of "regular expression"
+1. Splitting softword is a semantic task: for example, "nowhere" can be "now here" or "no where", in both cases it's concatenation of two dictionary words. "agrs" can be an abbreviation of "arguments", but can also be interprete as arg (argument) + s (single letter), or even a+r+g+s, concatnation of 4 random English letters. But semantically one of them makes the most sense under the context.
+2. The computational complexity is high: we don't know how many components are there. We will need to generate all possible n splits for n = 1, 2, 3, 4... Technically if we can generate all n-split for all n, then we can rate the possibility using some language model. 
+3. There might be more than one correct answers: for example, "regex" can be combination of abbreviations for "regular" and "expression", also can just be abbreviation of "regular expression". "kwargs" can be kw (keyword) args (arguments), it can also be kwargs (keyword arguments). Both options are equally "correct".
+4. There might be no correct answer: sometimes the given context is not enough ot infer the meaning of the softword. 
     
 **Previous attempts**:
 1. In "A large-scale investigation of local variable names in java programs: Is longer name better for broader scope variable?" 2021, Aman use the method: given a soft word, generate all possible two-term-concatenation, see if we can find concatenation of two dictionary words (their dictionary also includes 200 common abbreviations). (Limitation: what if the soft word is concatenation of more than two words? They claimed that such case doesn't exist in their data).
