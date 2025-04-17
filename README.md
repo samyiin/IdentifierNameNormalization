@@ -108,6 +108,8 @@ But in reality, I did some heuristics preprocessing in my own masters thesis to 
 This approach reduced the amount of request from 160k down to 35k... So worth a try. 
 
 ## Identify Dictionary words
+I use my own project in which I built a multi-purpose dictionary. The repo name is EnglishDictionary. Here I will provide relavent information to this project, you can check out the full info in the *EnglishDictionary* repo. 
+
 Identifying dictionary words might seem trivial at frist, but there are many versions of dictionary, some includes "too many" words and some includes "too few" words. For example, the word "gen" is technically a word that means "information" in British English, but "normally" people wouldn't treat it as a dictioanry word, but rather abbreviation for "generation". 
 
 So far I found a few dictionary of choice, I will list their link here:
