@@ -128,7 +128,7 @@ Some random dictionary on internet?
 
      https://www.english-corpora.org/coca/
 
-After usage, I feel like NLTK contains too little words, COCA contains way too much, also of course if I combine everything, it contains too much words (like "gen"), so I will stick to ENABLE. 
+After usage, I feel like NLTK contains too little words, COCA contains way too much, also of course if I combine everything, it contains too much words. I set default to ENABLE. 
 
 
 ## Identify abbreviations
