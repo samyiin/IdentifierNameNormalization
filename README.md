@@ -1,6 +1,20 @@
 # IdentifierNameNormalization
 Normalize identifier names (split, expand, and standardize). I need this too for my masters thesis, but I don't see such tools on the internet, so I guess I will build one myself. There are several libraries such as *inflection*, that can split a hardword into softwords. But I don't see tools that can identify the naming convention of a variable name. 
 
+## What does it do
+This projects can help you break down programming names into semantic componets, for example: the name "avgName_foryou" will be break down to "average name for you".
+
+## Rich Man's Pipeline
+The cost for 100 softwords is around 0.08 dollar. In my masters thesis, I spent 6 dollars for 7.5k softwords. 
+
+## Poor Man's Pipeline
+But in reality, I did some heuristics preprocessing in my own masters thesis to save money... (you don't have to, you can just pass everything to LLM). 
+1. We first use a local dictionary to identify all the dictionary words.
+2. We then filter out all the single letters and lable them as single letter (they might be abbreviation but I argue that most of the time they are too ambiguous to expand)
+3. Only for the rest of the unidentifiable softwords, we pass them to LLM. In our case, we only pass the hardword as the context for the unidentifiable softword, technically you can also pass in other context like the entire project, which should largely increase the accuracy. But money money....
+
+This approach reduced the amount of request from 160k down to 35k... So worth a try. 
+
 
 # Explanation
 ## Naming conventions
@@ -96,16 +110,10 @@ Obviously, it can also be that neither the split and the expansion are clear, an
 3. In "Learning natural coding conventions" 2014, Allamanis used The aggressive splitting algorithm GenTest, which systematically generates all possible splits of an identifier and then scores them based on a set of features. The features and exact weightings can be found in the work of Lawrie et al. (Limitation: This is a more general approach than Aman, but it still limits to concatenation of two components.)
 4. In "Investigating naming convention adherence in java references" 2015, Butler tokenised the names with INTT. (Limitation: tokenization is certainly a better approach, not so much critisism here... The only thing we want to improve is adding common sense: for example, "throwable" should not be splitted to "throw" and "able")
 
-**Our Approach**:
+**My theory**:
 
 I argue that chosing the most probably **interpretation** (aka **split and expansion**) is a semantic task. It based on "common sense", which is a complex judgement based on the given context -- the project, the file name, the function of the identifier in the code, the convention of community, etc.... Simple algorithm can not capture the omplexity. So I decided that I will let LLM decide the most probable interpretation. 
 
-But in reality, I did some heuristics preprocessing in my own masters thesis to save money... (you don't have to, you can just pass everything to LLM). 
-1. We first use a local dictionary to identify all the dictionary words.
-2. We then filter out all the single letters and lable them as single letter (they might be abbreviation but I argue that most of the time they are too ambiguous to expand)
-3. Only for the rest of the unidentifiable softwords, we pass them to LLM. In our case, we only pass the hardword as the context for the unidentifiable softword, technically you can also pass in other context like the entire project, which should largely increase the accuracy. But money money....
-
-This approach reduced the amount of request from 160k down to 35k... So worth a try. 
 
 ## Identify Dictionary words
 I use my own project in which I built a multi-purpose dictionary. The repo name is EnglishDictionary. Here I will provide relavent information to this project, you can check out the full info in the *EnglishDictionary* repo. 
