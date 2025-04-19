@@ -149,5 +149,6 @@ Difficulty: the relationship of words to abbreviations is many-to-many. There ar
 1. In "How developers choose names" 2022: Feitelson identify typos by names with a Levenshtein distance less than equals 2. This means that if one name can be transformed into an dictionary word by up to 2 single-letter edits (insertion, deletion, or substitution), then it's the typo of the dictionary word (Given that we already ruled out the possibility of single letter, dictionary word, abbreviation.) (This approach is pretty good, but since we are passing things to LLM already, we will not use this approach, LLM can identify typos using common sense, which should be more effective than this algorithm.)
 
     
-
+# Threats to Validation
+The first thing I notice, is that my framework of softword decomposition does not work for "made up words". Words such as "jsonify", which means change something to json format. Since this is a semantic parser, we are supoose to be able to identify such cases, since as human we understand this phrase. But my consideration here is that we are building this parser so that we can analyze the usage of natural language in my masters thesis. So in my thesis we didn't focus on the case of made up words in programming languages. Maybe this can be an interesting direction. But from a parsing word perspective, it is technically correct to parse jsonify to json (technical term) + ify (unidentifiable). 
 
