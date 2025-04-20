@@ -1,0 +1,65 @@
+{
+  "name": "interpret_softword",
+  "description": "Formats the interpretation of a softword by packaging it into structured semantic components. GPT should reason about the interpretation, then call this function to return the result in a structured way.",
+  "strict": false,
+  "parameters": {
+    "type": "object",
+    "required": [
+      "softword",
+      "interpretation"
+    ],
+    "properties": {
+      "softword": {
+        "type": "string",
+        "description": "The original softword being interpreted."
+      },
+      "interpretation": {
+        "type": "object",
+        "description": "Up to 3 most likely interpretations of the softword, including their component splits and final expanded meaning. Ordered by likelihood, the most likely one first.",
+        "required": [
+          "split",
+          "result"
+        ],
+        "properties": {
+          "split": {
+            "type": "array",
+            "description": "The list of semantic components the softword is split into.",
+            "items": {
+              "type": "object",
+              "required": [
+                "substring",
+                "type",
+                "expansion"
+              ],
+              "properties": {
+                "substring": {
+                  "description": "The substring found in the softword.",
+                  "type": "string"
+                },
+                "type": {
+                  "description": "The semantic type of the component.",
+                  "type": "string",
+                  "enum": [
+                    "dictionary",
+                    "abbreviation",
+                    "single_letter",
+                    "typo",
+                    "unidentifiable"
+                  ]
+                },
+                "expansion": {
+                  "description": "If the substring is an abbreviation, give the full words it abbreviates; If it is typo,  give the corrected words. Else, give the original substring.",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "result": {
+            "type": "string",
+            "description": "The final interpreted phrase after component expansion."
+          }
+        }
+      }
+    }
+  }
+}

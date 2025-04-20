@@ -1,0 +1,327 @@
+abbreviation,expansion
+num,number
+tmp,temporary
+params,parameters
+args,arguments
+ret,return
+buf,buffer
+idx,index
+ptr,pointer
+clazz,class
+sql,sql
+param,parameter
+arg,argument
+config,configuration
+json,json
+attr,attribute
+ip,ip
+src,source
+url,url
+dest,destination
+cmd,command
+desc,descriptor
+auth,authorize
+init,initialize
+iter,iteration
+cnt,count
+uid,user id
+addr,address
+conf,configuration
+impl,implementation
+jdk,jdk
+img,image
+ver,version
+loc,location
+regex,regular expression
+attrs,attributes
+expr,expression
+pid,process id
+cmp,compare
+uuid,universally unique id
+txt,text
+sep,separator
+dev,device
+env,environment
+func,function
+enum,enumeration
+nums,numbers
+req,request
+multi,multiple
+js,javascript
+mem,memory
+retval,return value
+ui,user interface
+coef,coefficient
+api,api
+opcode,operationcode
+sdk,sdk
+gc,Garbage Collection
+klass,class
+rgb,rgb
+vm,virtual machine
+sys,system
+wifi,wifi
+dep,dependency
+utf,utf
+ssl,ssl
+pos,position
+eq,equal
+vec,vector
+repo,repository
+att,attribute
+href,hyper text reference
+sha,sha
+chk,check
+dom,domain
+eval,evaluate
+proj,project
+clz,class
+configs,configurations
+cfg,configuration
+ctrl,control
+dpi,Dots Per Inch
+gid,group id
+ips,ips
+struct,structure
+pwd,print working directory
+ttl,ttl
+eof,end of file
+delim,delimiter
+eps,epsilon
+dns,dns
+jdbc,jdbc
+fmt,format
+attrib,attribute
+ssi,server side includes
+pdf,pdf
+alg,algorithm
+goto,go to
+alloc,allocate
+dtd,dtd
+mul,multiply
+jvm,java virtual machine
+ent,entry
+ack,acknowledge
+csv,csv
+parms,parameters
+servlet,servlet
+deps,dependencies
+sqrt,square root
+calc,calculate
+funcs,functions
+db,database
+stmt,statement
+addrs,addresses
+png,png
+passwd,password
+asc,ascending
+stdout,standardoutput
+acked,acknowledged
+ast,asterisk
+gif,gif
+uuids,universally unique ids
+gcd,gcd
+uids,user ids
+descs,descriptors
+util,utility
+exe,executable
+ident,identifier
+attribs,attributes
+bmp,bitmap
+crypto,cryptography
+dests,destinations
+algo,algorithm
+parm,parameter
+ide,ide
+mv,move
+jit,just in time
+cmds,commands
+eol,end of line
+dic,dictionary
+stderr,stadnarderror
+bool,boolean
+subdir,subdirectory
+ctl,control
+stddev,standarddeviation
+guid,group uid
+gz,gz
+argc,argumentscount
+repos,repositories
+strs,strings
+idxs,indexes
+utils,utilities
+atts,attributes
+pids,process ids
+impls,implementations
+stdin,standard input
+imag,image
+vecs,vectors
+apis,apis
+adr,address
+vers,version
+rgba,rgba
+jpeg,jpeg
+exprs,expression
+iters,iterations
+cwd,chnage working directory
+tk,tkinter
+bufs,buffers
+millis,milliseconds
+clazzs,classes
+argv,argumentsvector
+tmps,temporaries
+toc,table of contents
+inits,initializations
+trunc,truncate
+itr,iteration
+posix,posix
+rsa,rsa
+cnts,counts
+mysql,mysql
+rets,returns
+clr,clear
+symlink,symboliclink
+enums,enumaretions
+stmts,statements
+ppid,parent process id
+awt,^
+css,^
+ttls,ttls
+envs,environments
+regexs,regularexpressions
+endif,end if
+srcs,sources
+mkdirs,make directories
+fmts,formats
+doms,domains
+locs,locations
+pngs,pngs
+subdirs,sub directories
+truncs,truncations
+symlinks,symboliclinks
+coefs,coefficients
+gdbm,gdbm
+stdev,standarddeviation
+servlets,servlets
+webapp,webapplication
+usr,user
+ents,entries
+allocs,alocations
+clzs,clazzs
+auths,authentications
+delims,delimiters
+tgz,tgz
+prm,parameter
+jpg,jpg
+webapps,web applications
+jdks,jdks
+argvs,argument vectors
+uis,user interfaces
+adrs,address
+https,https
+ieee,ieee
+chks,checks
+seps,separators
+gids,group ids
+antlr,antlr
+confs,configurations
+tcl,tcl
+resolv,resolve
+inode,indexnode
+algos,algorithms
+vms,virtual machines
+guids,group user ids
+info,information
+infos,informations
+inf,information
+cert,certificate
+neg,negative
+dir,directory
+dirs,directories
+prev,previous
+ref,reference
+distro,distribution
+dst,destination
+cred,credentials
+ident,identity
+ext,external
+props,properties
+docs,documents
+sync,synchronize
+auto,automatic
+id,identifier
+temp,temporary
+min,minimum
+max,maximum
+col,column
+cols,columns
+pos,position
+cur,current
+mid,middle
+var,variable
+val,value
+vals,values
+def,definition
+nr,number
+msg,message
+pkg,package
+rect,rectangle
+dist,distance
+trans,transformer
+diff,difference
+app,application
+lat,latitude
+lng,longitude
+conn,connection
+len,length
+cls,class
+obj,object
+chars,characters
+hex,hexadecimal
+buff,buffer
+uri,uri
+cpu,cpu
+elem,element
+gdb,gdb
+gcj,gcj
+gui,graphical user interface
+mkdir,mkdir
+http,http
+ios,ios
+lang,language
+lib,library
+prob,probability
+wiki,wikipedia
+py,python
+html,html
+kwargs,keyword arguments
+unicode,unicode
+xml,xml
+dict,dictionary
+dic,dictionary
+django,django
+tqdm,tqdm
+numpy,numpy
+matplotlib,matplotlib
+tokenizer,tokenizer
+avg,average
+scipy,scipy
+sqlite,sqlite
+vocab,vocabulary
+fps,frames per second
+tokenize,tokenize
+kw,keyword
+kws,keywords
+pth,path
+weibo,weibo
+unigram,unigram
+weixin,weixin
+abbrev,abbreviation
+gpu,gpu
+vocab,vocabularies
+subreddits,subreddits
+freqs,frequencies
+cdf,cumulative distribution function
+postgresql,postgresql
+yml,yaml
+yaml,yaml
