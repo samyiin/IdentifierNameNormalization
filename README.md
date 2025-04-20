@@ -33,7 +33,7 @@ C. The SemanticSoftwordParser can show the reasoning process for the softword it
 - [Identify Dictionary words](#identify-dictionary-words)
 - [Identify abbreviations](#identify-abbreviations)
 - [Identify abbreviations](#identify-abbreviations)
-- [Abbreviations/acronym, domain specific terms, dictionary words](#abbreviations-acronym-domain-specific-terms–dictionary–words)
+- [Abbreviations/acronym, domain specific terms, dictionary words](#abbreviationsacronym-domain-specific-terms-dictionary-words)
 - [Identify typos](#identify-typos)
 - [Heuristic Softword Parser](#heuristic-softword-parser)
 - [Semantic Softword Parser](#semantic-softword-parser)
