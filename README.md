@@ -25,6 +25,11 @@ C. The SemanticSoftwordParser can show the reasoning process for the softword it
 
 **Why/How does it work? Please look at the Explanation section below.**
 
+# Threats to Validity
+The first thing I notice, is that my framework of softword decomposition does not work for "made up words". Words such as "jsonify", which means change something to json format. Since this is a semantic parser, we are supoose to be able to identify such cases, since as human we understand this phrase. Or words such as "tokenizer", means the tool that tokenize something, (tokenize also is a made up word that means to convert something into tokens...). Other examples are "configurator", "validator".
+
+But my consideration here is that we are building this parser so that we can analyze the usage of natural language in my masters thesis. So in my thesis we didn't focus on the case of made up words in programming languages. Maybe this can be an interesting direction. But from a parsing word perspective, it is technically correct to parse jsonify to json (technical term) + ify (unidentifiable). 
+
 # Explanation
 ## Table of Contents
 - [Naming conventions](#naming-conventions)
@@ -202,8 +207,4 @@ I basically pass this thinking process to LLM and tell it to parse according to 
 
 The prompt is in *Utils/sys_msg.txt* and the function definition is in *Utils/function.txt*. The cheapest model that is smart enough is gpt-4.1-mini. The gpt-4.1-nano or gpt-4o-mini are not smart enough for the task. 
 
-# Threats to Validation
-The first thing I notice, is that my framework of softword decomposition does not work for "made up words". Words such as "jsonify", which means change something to json format. Since this is a semantic parser, we are supoose to be able to identify such cases, since as human we understand this phrase. Or words such as "tokenizer", means the tool that tokenize something, (tokenize also is a made up word that means to convert something into tokens...). Other examples are "configurator", "validator".
-
-But my consideration here is that we are building this parser so that we can analyze the usage of natural language in my masters thesis. So in my thesis we didn't focus on the case of made up words in programming languages. Maybe this can be an interesting direction. But from a parsing word perspective, it is technically correct to parse jsonify to json (technical term) + ify (unidentifiable). 
 
