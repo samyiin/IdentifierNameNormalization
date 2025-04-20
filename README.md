@@ -1,20 +1,29 @@
 # IdentifierNameNormalization
-Normalize identifier names (split, expand, and standardize). I need this too for my masters thesis, but I don't see such tools on the internet, so I guess I will build one myself. There are several libraries such as *inflection*, that can split a hardword into softwords. But I don't see tools that can identify the naming convention of a variable name. 
+Normalize identifier names (split, expand, and standardize). I need this too for my masters thesis, but I don't see such tools on the internet, so I guess I will build one myself. There are several libraries such as *inflection*, that can split a hardword into softwords. But I need more than that.
 
-## What does it do
-This projects can help you break down programming names into semantic componets, for example: the name "avgName_foryou" will be break down to "average name for you".
+## What does it do, How to use this?
+Just look at **Pipelines.ipynb**. Here is a short explanation: 
 
-## Rich Man's Pipeline
-The cost for 100 softwords is around 0.08 dollar. In my masters thesis, I spent 6 dollars for 7.5k softwords. 
+This projects can help you break down programming names into semantic componets, for example: the name "avgName_foryou" will be broken down to something that looks like this:
 
-## Poor Man's Pipeline
-But in reality, I did some heuristics preprocessing in my own masters thesis to save money... (you don't have to, you can just pass everything to LLM). 
-1. We first use a local dictionary to identify all the dictionary words.
-2. We then filter out all the single letters and lable them as single letter (they might be abbreviation but I argue that most of the time they are too ambiguous to expand)
-3. Only for the rest of the unidentifiable softwords, we pass them to LLM. In our case, we only pass the hardword as the context for the unidentifiable softword, technically you can also pass in other context like the entire project, which should largely increase the accuracy. But money money....
+    [{'substring': 'avg', 'type': 'abbreviation', 'expansion': 'average'},
+     {'substring': 'Name', 'type': 'dictionary', 'expansion': 'name'},
+     {'substring': 'for', 'type': 'dictionary', 'expansion': 'for'},
+     {'substring': 'you', 'type': 'dictionary', 'expansion': 'you'}]
+Then you can choose to concatenate the things you want, like the original standardized name "avg_name_for_you", or the normalized name "average_name_for_you". 
 
-This approach reduced the amount of request from 160k down to 35k... So worth a try. 
+Other functionalities:
 
+A. The HardwordParser can identify the naming convention of a name by calling 
+
+    hard_word_parser.classify_naming_convention(<identifier_name>)
+B. Both SoftwordParsers can identify the type of the softword (see explanation for all possible types...)
+
+C. The SemanticSoftwordParser can show the reasoning process for the softword it just parsed. Call 
+
+    semantic_parser.get_reasoning_process()
+
+**Why/How does it work? Please look at the Explanation section below.**
 
 # Explanation
 ## Naming conventions
@@ -156,7 +165,20 @@ Difficulty: the relationship of words to abbreviations is many-to-many. There ar
 **Previous attempts**:
 1. In "How developers choose names" 2022: Feitelson identify typos by names with a Levenshtein distance less than equals 2. This means that if one name can be transformed into an dictionary word by up to 2 single-letter edits (insertion, deletion, or substitution), then it's the typo of the dictionary word (Given that we already ruled out the possibility of single letter, dictionary word, abbreviation.) (This approach is pretty good, but since we are passing things to LLM already, we will not use this approach, LLM can identify typos using common sense, which should be more effective than this algorithm.)
 
-    
+## Heuristic Softword Parser
+I did some heuristics preprocessing in my own masters thesis to save money... (you don't have to, you can just pass everything to LLM). 
+1. I prepared three dictionary to first identify English dictionary words, (very) common abbreviations and strings that represents programming types like "list". This part is taken directly from my EnglishDictionary project. Here is the link to it: https://github.com/samyiin/EnglishDictionary.git. 
+2. We then filter out all the single letters and lable them as single letter (they might be abbreviation but I argue that most of the time they are too ambiguous to expand)
+3. For each softword, either they are in the set {single letter, dictionary, common abbreviation}, or if we can generate a split so that the first substring and the second substring are both in the set, then we conclude that this is the correct parse. 
+4. Only for the rest of the unidentifiable softwords, we pass them to LLM. In our case, we only pass the hardword as the context for the unidentifiable softword, technically you can also pass in other context like the entire project, which should largely increase the accuracy. But money money....
+
+This approach reduced the amount of request from 160k down to 7k... So worth a try. (consider 7.5k is 6 dollars, 160k is around a hundred dollars..)
+
+## Semantic Softword Parser
+I basically pass this thinking process to LLM and tell it to parse according to certain format. Thanks to openai's function calling method, we can make sure the output of LLM is always accords to the given format. The trick here is to use function calling ability of Openai's assistant api, so that it will always return a json format defined by me. We are not actually calling any function, just need the formatting of output. I also find out that telling the model to reason before calling the function will greatly increase the accuracy of the results. (The semantic_softword_parser will check certain aspect of the results and if it's wrong then it will make the call again until success). 
+
+The prompt is in *Utils/sys_msg.txt* and the function definition is in *Utils/function.txt*. The cheapest model that is smart enough is gpt-4.1-mini. The gpt-4.1-nano or gpt-4o-mini are not smart enough for the task. 
+
 # Threats to Validation
 The first thing I notice, is that my framework of softword decomposition does not work for "made up words". Words such as "jsonify", which means change something to json format. Since this is a semantic parser, we are supoose to be able to identify such cases, since as human we understand this phrase. Or words such as "tokenizer", means the tool that tokenize something, (tokenize also is a made up word that means to convert something into tokens...). Other examples are "configurator", "validator".
 
