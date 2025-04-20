@@ -26,6 +26,20 @@ C. The SemanticSoftwordParser can show the reasoning process for the softword it
 **Why/How does it work? Please look at the Explanation section below.**
 
 # Explanation
+## Table of Contents
+- [Naming conventions](#naming-conventions)
+- [Hardword to Softword](#hardword-to-softword)
+- [Interprete softwords](#interprete-softwords)
+- [Identify Dictionary words](#identify-dictionary-words)
+- [Identify abbreviations](#identify-abbreviations)
+- [Identify abbreviations](#identify-abbreviations)
+- [Abbreviations/acronym, domain specific terms, dictionary words](#abbreviations-acronym-domain-specific-terms–dictionary–words)
+- [Identify typos](#identify-typos)
+- [Heuristic Softword Parser](#heuristic-softword-parser)
+- [Semantic Softword Parser](#semantic-softword-parser)
+
+
+
 ## Naming conventions
 There are several naming conventions, I will take the one from python style guild (https://peps.python.org/pep-0008/#descriptive-naming-styles). I used a different system of naming though... Regarding the regex of naming conventions, there are reddit posts that discuss about it, but whether or not to include numbers in the name is still debatable. So I wrote my own version of regex based on their discussion, that allows numbers in the names. (Although names cannot start with number.)
 
@@ -161,9 +175,18 @@ Difficulty: the relationship of words to abbreviations is many-to-many. There ar
 5. In "The impact of vocabulary normalization" 2015, Binkley mirror the process of statistical machine translation, exploits co-occurrence data to select the best of several possible expansions
 6. In "Investigating naming convention adherence in java references" 2015, Butler used the library MDSC, a freely available multi-dictionary spell checking library for identifier names, contains lists of abbreviations, acronyms and words from the SCOWL word lists with additional lists of technical terms, abbreviations and acronyms taken from their own work and the AMAP project.
 
+## Abbreviations/acronym, domain specific terms, dictionary words
+Sometimes a domain specific term might not be an abbreviation nor a dictionary word (For example "java"). Some-other-times, a domain specific term starts as an acronyme of real english words, but they got very popular so people start to just treat them as a new word (this happends in real language too.) (For example "sql"). Some_other-other-times, a domain specific term might even have abbreviation of themselves. (For example, "js" for "javascript"). This Includes things like strings that represent types in programming (e.g. "tuple").  
+
+Even in natural language, sometimes an abbreviation becomes so pervalent it just being considered as a dictionary word. (After all, dictionary is just a set of strings that "some" group of people aggreed upon --Sam). So there is always this blurry line between abbreviations and dictionary words.
+
+If we take a step further, we also need to ask the question: what is an abbreviation? If you go to https://www.abbreviations.com/, and type any random string, it is almost always an abbreviation for something (for simplicity, let's not differentiate abbreviations and acronyms). (So basically abbreviations are also just a set of strings that some group of people in certain domain agree upon. The more common the abbreviation, the larger the group. -- Wise man Sam again. )
+
+Anyways, so in short, to avoid answering all these complicated questions, I will define here that Domain specific term is considered abbreviation in my dictionary - even when they themsleves have abbreviation. Because sometimes they started with being acronymes of real english word.
+
 ## Identify typos
 **Previous attempts**:
-1. In "How developers choose names" 2022: Feitelson identify typos by names with a Levenshtein distance less than equals 2. This means that if one name can be transformed into an dictionary word by up to 2 single-letter edits (insertion, deletion, or substitution), then it's the typo of the dictionary word (Given that we already ruled out the possibility of single letter, dictionary word, abbreviation.) (This approach is pretty good, but since we are passing things to LLM already, we will not use this approach, LLM can identify typos using common sense, which should be more effective than this algorithm.)
+1. In "How developers choose names" 2022: Feitelson identify typos by names with a Levenshtein distance less than equals 2. This means that if one name can be transformed into an dictionary word by up to 2 single-letter edits (insertion, deletion, or substitution), then it's the typo of the dictionary word (Given that we already ruled out the possibility of single letter, dictionary word, abbreviation.) (This approach is pretty good, but since we are passing things to LLM already, we will not use this approach, LLM can identify typos using common sense, which should be more common sense than this algorithm.)
 
 ## Heuristic Softword Parser
 I did some heuristics preprocessing in my own masters thesis to save money... (you don't have to, you can just pass everything to LLM). 
