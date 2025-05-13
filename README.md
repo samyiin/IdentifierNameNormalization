@@ -90,6 +90,7 @@ Python library *inflection* uses the logic regarding underscore and combination 
 ## Interprete softwords
 By our definition above, soft words will only contain English Letters. (Because we splitted it by numbers and underscores). Now a softword can be a concatenation of one or more of the following semantic components:
 
+    numbers (We don't need to take care of this.)
     single letters
     dictionary words
     common abbreviation (including acronyms, technical terms, domain specific terms)
