@@ -1,6 +1,7 @@
 from Utils.EnglishDictionary import EnglishDictionary
 
 class HeuristicParser:
+    NUMBER = "numbers"
     SINGLE_LETTER = "single_letter"
     DICTIONARY_WORD = "dictionary"
     ABBREVIATION = "abbreviation"
@@ -12,7 +13,9 @@ class HeuristicParser:
         self.my_dictionary = EnglishDictionary()
 
     def get_type(self, word):
-        if len(word) == 1:
+        if word.isdigit():
+            return self.NUMBER
+        elif len(word) == 1:
             return self.SINGLE_LETTER
         # prioritize if it's on the abbreviation list,
         # because we manually checked the abbrev list, they are actually abbrev
