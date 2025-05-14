@@ -71,7 +71,7 @@ I have compared the definition of the 5 classes I defined, they are mutually exc
 ## Hardword to Softword
 This notion is introduced by Lawrie in his paper *Quantifying identifier quality: An analysis of trends* (2007). "Hard words" are visible parts like "priorityQueue" and "soft words" are smaller semantic units like priority and queue. Regarding the logic to split words, the goal is to separate all the visible separable parts, here I fist split by naming convention:
 
-First of all, no standard English word contains number or underscore in them, so if we see number or underscore, it is an indicator for split.
+First of all, no standard English word contains number or underscore in them, so if we see number or underscore, it is an indicator for split. (Although there are some phrases that have meaning after combined with a number, like "unit64")
 
     [A-Za-z]+|\d+
 
@@ -90,7 +90,7 @@ Python library *inflection* uses the logic regarding underscore and combination 
 ## Interprete softwords
 By our definition above, soft words will only contain English Letters. (Because we splitted it by numbers and underscores). Now a softword can be a concatenation of one or more of the following semantic components:
 
-    numbers (We don't need to take care of this.)
+    numbers 
     single letters
     dictionary words
     common abbreviation (including acronyms, technical terms, domain specific terms)
@@ -204,7 +204,7 @@ I did some heuristics preprocessing in my own masters thesis to save money... (y
 This approach reduced the amount of request from 160k down to 7k... So worth a try. (consider 7.5k is 6 dollars, 160k is around a hundred dollars..)
 
 ## Semantic Softword Parser
-I basically pass this thinking process to LLM and tell it to parse according to certain format. Thanks to openai's function calling method, we can make sure the output of LLM is always accords to the given format. The trick here is to use function calling ability of Openai's assistant api, so that it will always return a json format defined by me. We are not actually calling any function, just need the formatting of output. I also find out that telling the model to reason before calling the function will greatly increase the accuracy of the results. (The semantic_softword_parser will check certain aspect of the results and if it's wrong then it will make the call again until success). 
+I basically pass this thinking process to LLM and tell it to parse according to certain format. Thanks to openai's function calling method, we can make sure the output of LLM is always accords to the given format. The trick here is to use function calling ability of Openai's assistant api, so that it will always return a json format defined by me. We are not actually calling any function, just need the formatting of output. I also find out that telling the model to reason before calling the function will greatly increase the accuracy of the results. (The semantic_softword_parser will check certain aspect of the results and if it's wrong then it will make the call again until success). I didn't put nunbers as an option because by definition above any number will be a softword by itself, and we can handle it algorithmicly. 
 
 The prompt is in *Utils/sys_msg.txt* and the function definition is in *Utils/function.txt*. The cheapest model that is smart enough is gpt-4.1-mini. The gpt-4.1-nano or gpt-4o-mini are not smart enough for the task. 
 
