@@ -68,14 +68,14 @@ Names that are unpleasant but still considered as valid:
 
 I have compared the definition of the 5 classes I defined, they are mutually exclusive (there cannot be a name that is in both class), and they are complementary (all the names must belong to one of the classes (of course, because I have the "other" class that takes every unidentifiable names....). There can be a totally different definition on internet if you don't think number should exist in identifier names, but I guess just take the "0-9" out of the regex and it would work...
     
-## Hardword to Softword
-This notion is introduced by Lawrie in his paper *Quantifying identifier quality: An analysis of trends* (2007). "Hard words" are visible parts like "priorityQueue" and "soft words" are smaller semantic units like priority and queue. Regarding the logic to split words, the goal is to separate all the visible separable parts, here I fist split by naming convention:
+## Identifier Names to Hardwords
+This notion is introduced by Lawrie in his paper *Quantifying identifier quality: An analysis of trends* (2007). **Hard words** are substrings of an identifier that are clearly separated by explicit word markers, such as underscores or camelCase conventions. **Soft words** are conceptual components within a hard word. A hard word might contain multiple soft words if it encodes multiple concepts without explicit word markers. For example, in the identifier "hashtable_entry", there are two hard words: "hashtable" and "entry". The hard word "hashtable" is further composed of the soft words "hash" and "table", while entry is a single soft word. This sction we will talk about how to split identifier names to hard words. 
 
 First of all, no standard English word contains number or underscore in them, so if we see number or underscore, it is an indicator for split. (Although there are some phrases that have meaning after combined with a number, like "unit64")
 
     [A-Za-z]+|\d+
 
-After we split the name by underscores and numbers, each part will be a combination of upper and lower letters, here our rule is **"Split before each capital letter that is followed by a lowercase letter or capital letter that is preceded by a lowercase letter"**. 
+After we split the name by underscores and numbers, each part will be a combination of upper and lower letters, here our rule is *"Split before each capital letter that is followed by a lowercase letter or capital letter that is preceded by a lowercase letter"*. 
 
     (?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])
 
@@ -87,8 +87,8 @@ For example:
 
 Python library *inflection* uses the logic regarding underscore and combination of upper and lower letters, but it doesn't keep the original capitalization, neither does it split numbers. We need the original caitalization for the masters thesis. So I guess I will just write one parser myself.  
 
-## Interprete softwords
-By our definition above, soft words will only contain English Letters. (Because we splitted it by numbers and underscores). Now a softword can be a concatenation of one or more of the following semantic components:
+## Interprete Hard Words
+By our definition above, hard words will contain either all English Letters or all numbers. (Because we splitted it by numbers and underscores). Now a hard word can be a concatenation of one or more of the following semantic components (soft words):
 
     numbers 
     single letters
@@ -97,11 +97,11 @@ By our definition above, soft words will only contain English Letters. (Because 
     typo of dictionary word (typo of abbreviation would be unidentifiable term...)
     unidentifiable terms
 
-We generalize the process of softword interpretation into two steps: **split** and **expansion**. 
-1. Split the softword into semantic components. In this step we decide the type and number of components inside a softword.  
+We generalize the process of hard word interpretation into two steps: **split** and **expansion**. 
+1. Split the softword into semantic components (soft words). In this step we decide the type and number of components inside a hard word.  
 2. Based on the split in step 1, expand each semantic components if necessary: single letter and dictionary word stays as is, expand abbreviations and fix typos.
 
-Eventually the most probable **interpretation** of a softword becomes the most likely "combination" of **split and expansion**. (Technically we can have a math definition here with that conditional probability and Cartesian product and stuff...)
+The most probable **interpretation** of a hard word is the most likely "combination" of **split and expansion**. (Technically we can have a math definition here with that conditional probability and Cartesian product and stuff...)
 
 I will give four sets of examples, the first set of examples is when the split and expansion are very clear (to our "common sense"):
 
@@ -134,8 +134,8 @@ The fourth set of examples is more tricky: the result is the same, but there mig
 Obviously, it can also be that neither the split and the expansion are clear, and thus in most cases the result are not clear. 
     
 **Previous attempts**:
-1. In "A large-scale investigation of local variable names in java programs: Is longer name better for broader scope variable?" 2021, Aman use the method: given a soft word, generate all possible two-term-concatenation, see if we can find concatenation of two dictionary words (their dictionary also includes 200 common abbreviations). (Limitation: what if the soft word is concatenation of more than two words? They claimed that such case doesn't exist in their data).
-2. In "Quantifying identifier quality: An analysis of trends" 2007, Lawrie used A greedy algorithm to identify soft words. It looks for the longest prefix and the longest suffix that are ’on a list’. The list of abbreviations includes domain abbreviations (e.g., alt for altitude) and programming abbreviations (e.g., txt for text and msg for message). (Limitation: This list of only about 200 common abbreviations, clearly does not contain all abbreviation used in the analyzed code. )
+1. In "A large-scale investigation of local variable names in java programs: Is longer name better for broader scope variable?" 2021, Aman use the method: given a hard word, generate all possible two-term-concatenation, see if we can find concatenation of two dictionary words (their dictionary also includes 200 common abbreviations). (Limitation: what if the soft word is concatenation of more than two words? They claimed that such case doesn't exist in their data).
+2. In "Quantifying identifier quality: An analysis of trends" 2007, Lawrie used A greedy algorithm to identify hard words. It looks for the longest prefix and the longest suffix that are ’on a list’. The list of abbreviations includes domain abbreviations (e.g., alt for altitude) and programming abbreviations (e.g., txt for text and msg for message). (Limitation: This list of only about 200 common abbreviations, clearly does not contain all abbreviation used in the analyzed code. )
 3. In "Learning natural coding conventions" 2014, Allamanis used The aggressive splitting algorithm GenTest, which systematically generates all possible splits of an identifier and then scores them based on a set of features. The features and exact weightings can be found in the work of Lawrie et al. (Limitation: This is a more general approach than Aman, but it still limits to concatenation of two components.)
 4. In "Investigating naming convention adherence in java references" 2015, Butler tokenised the names with INTT. (Limitation: tokenization is certainly a better approach, not so much critisism here... The only thing we want to improve is adding common sense: for example, "throwable" should not be splitted to "throw" and "able")
 
@@ -145,33 +145,10 @@ I argue that chosing the most probably **interpretation** (aka **split and expan
 
 
 ## Identify Dictionary words
-I use my own project in which I built a multi-purpose dictionary. The repo name is EnglishDictionary. Here I will provide relavent information to this project, you can check out the full info in the *EnglishDictionary* repo. 
+I use my own project in which I built a multi-purpose dictionary. The repo name is EnglishDictionary. For the concern of this project, the dictionary we use is ENABLE, you can check out the full info in the *EnglishDictionary* repo. 
 
-Identifying dictionary words might seem trivial at frist, but there are many versions of dictionary, some includes "too many" words and some includes "too few" words. For example, the word "gen" is technically a word that means "information" in British English, but "normally" people wouldn't treat it as a dictioanry word, but rather abbreviation for "generation". 
-
-So far I found a few dictionary of choice, I will list their link here:
-NLTK
-
-    https://www.nltk.org/
-ENABLE (Enhanced North American Benchmark Lexicon)
-
-    https://github.com/dolph/dictionary.git
-SCOWL (Spell Checker Oriented Word Lists)
-
-    https://github.com/en-wl/wordlist.git
-Some random dictionary on internet?
-
-    https://github.com/dwyl/english-words.git
-
- COCA (Corpus of Contemporary American English )
-
-     https://www.english-corpora.org/coca/
-
-After usage, I feel like NLTK contains too little words, COCA contains way too much, also of course if I combine everything, it contains too much words. I set default to ENABLE. 
-
-
-## Identify abbreviations
-Difficulty: the relationship of words to abbreviations is many-to-many. There are cases where the same word has multiple abbreviations, such as “configuration”which is abbreviated as “config”, “conf”, or even “cfg”. At the same time the abbreviation “pos”can signify “position”or “positive”. Although we can never be certain, a common approach is to take context into consideration. For example, "pos" in "bomb_pos" is more likely to mean "position" than "positive". 
+## Expanding abbreviations
+Difficulty: the relationship of abbreviations to expansions is many-to-many. There are cases where the same word has multiple abbreviations, such as “configuration”which is abbreviated as “config”, “conf”, or even “cfg”. At the same time the abbreviation “pos”can signify “position”or “positive”. Although we can never be certain, a common approach is to take context into consideration. For example, "pos" in "bomb_pos" is more likely to mean "position" than "positive". 
 
 **Previous attempts**:
 1. In "Statistical unigram analysis for source code repository” 2017, Xu built a Naive Bayes model to predict the original word behind an abbreviation.they search for potential candidate within a certain **radius** of the abbreviation, e.g., the method or class in which the abbreviation is used or data flow or control flow neighborhood of the abbreviation. And then compare if the abbreviation is a sub string of the found word (variables it interacts with).
@@ -198,13 +175,13 @@ Anyways, so in short, to avoid answering all these complicated questions, I will
 I did some heuristics preprocessing in my own masters thesis to save money... (you don't have to, you can just pass everything to LLM). 
 1. I prepared three dictionary to first identify English dictionary words, (very) common abbreviations and strings that represents programming types like "list". This part is taken directly from my EnglishDictionary project. Here is the link to it: https://github.com/samyiin/EnglishDictionary.git. 
 2. We then filter out all the single letters and lable them as single letter (they might be abbreviation but I argue that most of the time they are too ambiguous to expand)
-3. For each softword, either they are in the set {single letter, dictionary, common abbreviation}, or if we can generate a split so that the first substring and the second substring are both in the set, then we conclude that this is the correct parse. 
-4. Only for the rest of the unidentifiable softwords, we pass them to LLM. In our case, we only pass the hardword as the context for the unidentifiable softword, technically you can also pass in other context like the entire project, which should largely increase the accuracy. But money money....
+3. For each hard word, either they are in the set {single letter, dictionary, common abbreviation}, or if we can generate a split so that the first substring and the second substring are both in the set, then we conclude that this is the correct parse. 
+4. Only for the rest of the unidentifiable hard words, we pass them to LLM. In our case, we only pass the hardword as the context for the unidentifiable hardword, technically you can also pass in other context like the entire project, which should largely increase the accuracy. But money money....
 
 This approach reduced the amount of request from 160k down to 7k... So worth a try. (consider 7.5k is 6 dollars, 160k is around a hundred dollars..)
 
 ## Semantic Softword Parser
-I basically pass this thinking process to LLM and tell it to parse according to certain format. Thanks to openai's function calling method, we can make sure the output of LLM is always accords to the given format. The trick here is to use function calling ability of Openai's assistant api, so that it will always return a json format defined by me. We are not actually calling any function, just need the formatting of output. I also find out that telling the model to reason before calling the function will greatly increase the accuracy of the results. (The semantic_softword_parser will check certain aspect of the results and if it's wrong then it will make the call again until success). I didn't put nunbers as an option because by definition above any number will be a softword by itself, and we can handle it algorithmicly. 
+I basically pass this thinking process to LLM and tell it to parse according to certain format. Thanks to openai's function calling method, we can make sure the output of LLM is always accords to the given format. The trick here is to use function calling ability of Openai's assistant api, so that it will always return a json format defined by me. We are not actually calling any function, just need the formatting of output. I also find out that telling the model to reason before calling the function will greatly increase the accuracy of the results. (The semantic_softword_parser will check certain aspect of the results and if it's wrong then it will make the call again until success). I didn't put nunbers as an option because by definition above any number will be a hard word by itself, and we can handle it algorithmicly. 
 
 The prompt is in *Utils/sys_msg.txt* and the function definition is in *Utils/function.txt*. The cheapest model that is smart enough is gpt-4.1-mini. The gpt-4.1-nano or gpt-4o-mini are not smart enough for the task. 
 
