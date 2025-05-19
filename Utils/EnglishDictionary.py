@@ -1,5 +1,4 @@
 from nltk.corpus import words
-from wordfreq import word_frequency
 import numpy as np
 # This will give all conjugations of a verb
 # https://pypi.org/project/word-forms/
@@ -29,6 +28,7 @@ class EnglishDictionary:
         # initialize the list of program type names
         self.load_program_type_list()
 
+    # =================function 1: check dictionary words ==========================
 
     @staticmethod
     def _load_word_list(file_path):
@@ -71,19 +71,8 @@ class EnglishDictionary:
     def is_english(self, word):
         return (word in self.dictionary) or (word.lower().strip() in self.dictionary)
 
-    # =================function 2: get words frequency ==========================
-    def get_word_natural_frequency(self, word):
-        """
-        # This word_frequency actually includes GoogleBooksNgram
-        # https://github.com/rspeer/wordfreq.git
-        # Good for single english word, Limited functionality for n-grams (a strings that contains many words)
-        :param word:
-        :return:
-        """
-        freq = word_frequency(word, 'en')
-        return freq
 
-    # =================function 3: check abbreviations ==========================
+    # =================function 2: check abbreviations ==========================
     def load_abbreviation_list(self, abbreviation_list="my_list"):
         """
         So far I only have one abbreviation list
@@ -108,7 +97,7 @@ class EnglishDictionary:
         else:
             return None
 
-    # =================function 4: check type driven names ==========================
+    # =================function 3: check type driven names ==========================
     def load_program_type_list(self, program_type="list1"):
         """
         So far I only have one abbreviation list
@@ -133,7 +122,7 @@ class EnglishDictionary:
         else:
             return None
 
-    # =================function 3: check word forms ==========================
+    # =================function 4: check word forms ==========================
 
     def word_forms(self, word):
         # Unused....
