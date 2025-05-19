@@ -6,10 +6,10 @@ Just look at **Pipelines.ipynb**. Here is a short explanation:
 
 This projects can help you break down programming names into semantic componets, for example: the name "avgName_foryou" will be broken down to something that looks like this:
 
-    [{'substring': 'avg', 'type': 'abbreviation', 'expansion': 'average'},
-     {'substring': 'Name', 'type': 'dictionary', 'expansion': 'name'},
-     {'substring': 'for', 'type': 'dictionary', 'expansion': 'for'},
-     {'substring': 'you', 'type': 'dictionary', 'expansion': 'you'}]
+    [{'softword': 'avg', 'type': 'abbreviation', 'expansion': 'average'},
+     {'softword': 'Name', 'type': 'dictionary', 'expansion': 'name'},
+     {'softword': 'for', 'type': 'dictionary', 'expansion': 'for'},
+     {'softword': 'you', 'type': 'dictionary', 'expansion': 'you'}]
 Then you can choose to concatenate the things you want, like the original standardized name "avg_name_for_you", or the normalized name "average_name_for_you". 
 
 Other functionalities:
