@@ -93,7 +93,7 @@ By our definition above, soft words will only contain English Letters. (Because 
     numbers 
     single letters
     dictionary words
-    common abbreviation (including acronyms, technical terms, domain specific terms)
+    abbreviation (We call it "abbreviation" but it's combination of  common abbreviations/acronyms and technical/domain specific terms)
     typo of dictionary word (typo of abbreviation would be unidentifiable term...)
     unidentifiable terms
 
@@ -181,8 +181,8 @@ Difficulty: the relationship of words to abbreviations is many-to-many. There ar
 5. In "The impact of vocabulary normalization" 2015, Binkley mirror the process of statistical machine translation, exploits co-occurrence data to select the best of several possible expansions
 6. In "Investigating naming convention adherence in java references" 2015, Butler used the library MDSC, a freely available multi-dictionary spell checking library for identifier names, contains lists of abbreviations, acronyms and words from the SCOWL word lists with additional lists of technical terms, abbreviations and acronyms taken from their own work and the AMAP project.
 
-## Abbreviations/acronym, domain specific terms, dictionary words
-Sometimes a domain specific term might not be an abbreviation nor a dictionary word (For example "java"). Some-other-times, a domain specific term starts as an acronyme of real english words, but they got very popular so people start to just treat them as a new word (this happends in real language too.) (For example "sql"). Some_other-other-times, a domain specific term might even have abbreviation of themselves. (For example, "js" for "javascript"). This Includes things like strings that represent types in programming (e.g. "tuple").  
+## The "abbreviation" catagory: Abbreviations/acronym, techical/domain specific terms, dictionary words
+A more accurate name for the "abbreviation" catagory should be "identifiable non-dictionary words (excluding typos)" because sometimes a domain specific term might not be an abbreviation nor a dictionary word (For example "java"). Some-other-times, a domain specific term starts as an acronyme of real english words, but they got very popular so people start to just treat them as a new word (this happends in real language too.) (For example "sql"). Some_other-other-times, a domain specific term might even have abbreviation of themselves. (For example, "js" for "javascript"). This Includes things like strings that represent types in programming (e.g. "tuple").  
 
 Even in natural language, sometimes an abbreviation becomes so pervalent it just being considered as a dictionary word. (After all, dictionary is just a set of strings that "some" group of people aggreed upon --Sam). So there is always this blurry line between abbreviations and dictionary words.
 
