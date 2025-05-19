@@ -35,24 +35,24 @@ class HeuristicParser:
             expansion = softword
         return expansion.strip()
 
-    def parse(self, softword):
+    def parse(self, hardword):
         """
-        Assume the softword only contains english letters
-        :param softword:
+        Assume the hardword contains only english letters or only numbers
+        :param hardword:
         :return:
         """
         # Direct match without splitting
-        word_type = self.get_type(softword)
+        word_type = self.get_type(hardword)
 
         # if the softword is identifiable: directly identify
         if word_type != "unknown":
-            expansion = self.expand_softword(softword)
+            expansion = self.expand_softword(hardword)
             interpretation = {
-                "softword": softword,
+                "hardword": hardword,
                 "interpretation": {
                     "split": [
                         {
-                            "substring": softword,
+                            "softword": hardword,
                             "type": word_type,
                             "expansion": expansion
                         }
@@ -63,9 +63,9 @@ class HeuristicParser:
             return interpretation
 
         # if the softword is not identifiable, then see if there are two concatenated identifiable terms
-        for i in range(1, len(softword)):
-            first = softword[:i]
-            second = softword[i:]
+        for i in range(1, len(hardword)):
+            first = hardword[:i]
+            second = hardword[i:]
 
             first_type = self.get_type(first)
             second_type = self.get_type(second)
@@ -76,16 +76,16 @@ class HeuristicParser:
                 second_expansion = self.expand_softword(second)
 
                 interpretation = {
-                    "softword": softword,
+                    "hardword": hardword,
                     "interpretation": {
                         "split": [
                             {
-                                "substring": first,
+                                "softword": first,
                                 "type": first_type,
                                 "expansion": first_expansion
                             },
                             {
-                                "substring": second,
+                                "softword": second,
                                 "type": second_type,
                                 "expansion": second_expansion
                             }

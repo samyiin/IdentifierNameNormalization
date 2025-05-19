@@ -42,14 +42,14 @@ class SemanticSoftwordParser:
 
         # check if all the substrings connects to the original word
         reconstructed_softword = "".join(
-            split_item["substring"] for split_item in structured_json['interpretation']['split'])
-        if not reconstructed_softword == structured_json["softword"]:
+            split_item["softword"] for split_item in structured_json['interpretation']['split'])
+        if not reconstructed_softword == structured_json["hardword"]:
             return False
 
         # check if the gpt indeed didn't expand the dictionary words and single letters
         for split_item in structured_json['interpretation']["split"]:
             if split_item["type"] in ["dictionary", "single_letter"]:
-                if split_item["expansion"] != split_item["substring"]:
+                if split_item["expansion"] != split_item["softword"]:
                     return False
 
         # check if the joined expansion word is indeed the result
@@ -61,7 +61,7 @@ class SemanticSoftwordParser:
         # That's pretty much all the tests
         return True
 
-    def query(self, softword, soft_word_context):
+    def query(self, hardword, hardword_context):
         # Set your OpenAI API key
         openai.api_key = self.openai_apikey
 
@@ -70,7 +70,7 @@ class SemanticSoftwordParser:
             {"role": "system", "content": self.system_prompt},
             {
                 "role": "user",
-                "content": f"softword: \"{softword}\"\ncontext: {soft_word_context}"
+                "content": f"hardword: \"{hardword}\"\ncontext: {hardword_context}"
             }
         ]
 
@@ -85,19 +85,19 @@ class SemanticSoftwordParser:
 
         return response
 
-    def query_until_success(self, softword, soft_word_context, max_query_num=10):
-        response = self.query(softword, soft_word_context)
+    def query_until_success(self, hardword, hardword_context, max_query_num=10):
+        response = self.query(hardword, hardword_context)
         # if response failed
         timeout = 0
         while not self.check_response(response):
-            response = self.query(softword, soft_word_context)
+            response = self.query(hardword, hardword_context)
             timeout += 1
             if timeout > max_query_num:
                 raise Exception(
                     "Query failed: Could be LLM made 10 mistake in a row, internet, openai updated their service, or invalid APIKEY...")
         return response
 
-    def parse(self, softword, soft_word_context):
+    def parse(self, hardword, hardword_context):
         """
 
         :param softword:
@@ -105,7 +105,7 @@ class SemanticSoftwordParser:
              f'This word is used in the Python programming identifier name "{soft_word_context}".'
         :return:
         """
-        response = self.query_until_success(softword, soft_word_context)
+        response = self.query_until_success(hardword, hardword_context)
 
         # this is the structured result including split and expand
         func_args = response["choices"][0]["message"]["function_call"]["arguments"]
@@ -118,7 +118,7 @@ class SemanticSoftwordParser:
 
     def get_reasoning_process(self):
         """
-        Only call this after you parsed!!!
+        Only call this after you parsed!!!And this will not store the history
         :return:
         """
         return self.reasoning_process
